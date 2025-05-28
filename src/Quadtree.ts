@@ -1,9 +1,9 @@
-import type { Point } from "./Point";
+import { Point } from "./Point";
 import { Rectangle } from "./Rectangle";
 import p5 from "p5";
 
 export class Quadtree {
-	range: Rectangle;
+	boundary: Rectangle;
 	points: Point[] = [];
 	capacity: number;
 	rt?: Quadtree;
@@ -12,13 +12,13 @@ export class Quadtree {
 	lb?: Quadtree;
 	divided = false;
 
-	constructor(range: Rectangle, capacity = 4) {
-		this.range = range;
+	constructor(boundary: Rectangle, capacity = 4) {
+		this.boundary = boundary;
 		this.capacity = capacity;
 	}
 
 	initChildrenQuadtree() {
-		const { x, y, halfWidth, halfHeight } = this.range;
+		const { x, y, halfWidth, halfHeight } = this.boundary;
 		const newHalfWidth = halfWidth / 2;
 		const newHalfHeight = halfHeight / 2;
 
@@ -65,7 +65,7 @@ export class Quadtree {
 	}
 
 	insert(point: Point) {
-		if (!this.range.contains(point)) {
+		if (!this.boundary.contains(point)) {
 			return;
 		}
 
@@ -84,8 +84,25 @@ export class Quadtree {
 		}
 	}
 
+	query(rect: Rectangle): Point[] {
+		if (!rect.intersects(this.boundary)) {
+			return [];
+		}
+
+		const lb = this.lb?.query(rect) || [];
+		const rb = this.rb?.query(rect) || [];
+		const lt = this.lt?.query(rect) || [];
+		const rt = this.rt?.query(rect) || [];
+
+		const self = this.points.filter((point) => {
+			return rect.contains(point);
+		});
+
+		return [...self, ...lb, ...rt, ...lt, ...rb];
+	}
+
 	draw(p: p5) {
-		this.range.draw(p);
+		this.boundary.draw(p);
 
 		if (this.divided) {
 			this.lt?.draw(p);

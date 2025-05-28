@@ -10,8 +10,8 @@ export class Rectangle {
 	constructor(x: number, y: number, width: number, height: number) {
 		this.x = x;
 		this.y = y;
-		this.halfWidth = width / 2;
-		this.halfHeight = height / 2;
+		this.halfWidth = width;
+		this.halfHeight = height;
 	}
 
 	contains(point: Point) {
@@ -23,17 +23,26 @@ export class Rectangle {
 		);
 	}
 
-	// 添加绘制方法用于p5.js可视化
+	intersects(rect: Rectangle) {
+		const r1 = rect;
+		const r2 = this;
+
+		// 检查是否不相交
+		return !(
+			(
+				r2.x - r2.halfWidth > r1.x + r1.halfWidth || // r2 在 r1 右边
+				r2.x + r2.halfWidth < r1.x - r1.halfWidth || // r2 在 r1 左边
+				r2.y - r2.halfHeight > r1.y + r1.halfHeight || // r2 在 r1 下边
+				r2.y + r2.halfHeight < r1.y - r1.halfHeight
+			) // r2 在 r1 上边
+		);
+	}
+
 	draw(p: p5) {
 		p.noFill();
-		p.stroke(0);
+		p.stroke(255);
 		p.strokeWeight(1);
-		// 从中心点转换为左上角坐标
-		p.rect(
-			this.x - this.halfWidth,
-			this.y - this.halfHeight,
-			this.halfWidth * 2,
-			this.halfHeight * 2
-		);
+		p.rectMode(p.CENTER);
+		p.rect(this.x, this.y, this.halfWidth * 2, this.halfHeight * 2);
 	}
 }

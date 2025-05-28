@@ -13,28 +13,51 @@ export function setupCounter(element: HTMLButtonElement) {
 	const sketch = (p: p5) => {
 		let quadtree: Quadtree;
 		let points: Point[] = [];
+		const width = 400;
+		const height = 400;
 
 		p.setup = () => {
-			p.createCanvas(400, 400);
+			p.createCanvas(width, width);
 			p.background(200);
 
-			quadtree = new Quadtree(new Rectangle(100, 100, 200, 200));
+			quadtree = new Quadtree(
+				new Rectangle(width / 2, height / 2, width / 2, height / 2)
+			);
 
-			// 添加一些随机点
-			for (let i = 0; i < 50; i++) {
-				// 在矩形范围内生成随机点 (0, 0) 到 (200, 200)
-				const point = new Point(p.random(0, 200), p.random(0, 200));
+			for (let i = 0; i < 300; i++) {
+				const point = new Point(p.random(0, width), p.random(0, height));
 				points.push(point);
 				quadtree.insert(point);
 			}
-
-			console.log(
-				"%c [ quadtree ]-30",
-				"font-size:13px; background:pink; color:#bf2c9f;",
-				quadtree
-			);
+		};
+		p.draw = () => {
+			p.background(0);
 
 			quadtree.draw(p);
+
+			p.stroke(0, 255, 0);
+			p.strokeWeight(5);
+
+			for (const point of points) {
+				p.point(point.x, point.y);
+			}
+
+			const mouseRect = new Rectangle(p.mouseX, p.mouseY, 50, 30);
+			p.rectMode(p.CENTER);
+			p.rect(
+				mouseRect.x,
+				mouseRect.y,
+				mouseRect.halfWidth * 2,
+				mouseRect.halfHeight * 2
+			);
+
+			const containsPoints = quadtree.query(mouseRect);
+
+			p.stroke(255, 0, 0);
+			p.strokeWeight(5);
+			for (const point of containsPoints) {
+				p.point(point.x, point.y);
+			}
 		};
 	};
 
