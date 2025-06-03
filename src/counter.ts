@@ -13,8 +13,8 @@ export function setupCounter(element: HTMLButtonElement) {
 	const sketch = (p: p5) => {
 		let quadtree: Quadtree;
 		let points: Point[] = [];
-		const width = 400;
-		const height = 400;
+		const width = 800;
+		const height = 800;
 
 		p.setup = () => {
 			p.createCanvas(width, width);
@@ -24,7 +24,7 @@ export function setupCounter(element: HTMLButtonElement) {
 				new Rectangle(width / 2, height / 2, width / 2, height / 2)
 			);
 
-			for (let i = 0; i < 300; i++) {
+			for (let i = 0; i < 1500; i++) {
 				const point = new Point(p.random(0, width), p.random(0, height));
 				points.push(point);
 				quadtree.insert(point);
