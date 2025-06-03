@@ -1,9 +1,9 @@
 import "./style.css";
-import { setupCounter } from "./counter.ts";
+import { setupMover, setupQuadree } from "./setup.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div id="counter">
   </div>
 `;
 
-setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+setupMover(document.querySelector<HTMLButtonElement>("#counter")!);
