@@ -101,3 +101,46 @@ export function setupMover(element: HTMLButtonElement) {
 
   new p5(sketch, sketchContainer);
 }
+export function setupForce(element: HTMLButtonElement) {
+  const sketchContainer = document.createElement("div");
+  sketchContainer.id = "sketch-container";
+  element.parentElement?.appendChild(sketchContainer);
+  const sketch = (p: p5) => {
+    let mover: Mover;
+    let mover2: Mover;
+    p.setup = () => {
+      p.createCanvas(800, 400);
+      p.background(200);
+      mover = new Mover(p.createVector(p.width / 3, p.height / 2), 2, p);
+      mover2 = new Mover(p.createVector(p.width / 2, p.height / 2), 20, p);
+    };
+
+    p.keyPressed = () => {
+      if (p.keyCode === 38) {
+        mover.applyForce(new p5.Vector(0.1, -30));
+        mover2.applyForce(new p5.Vector(0.1, -3000));
+      }
+    };
+
+    p.draw = () => {
+      p.background(200);
+      if (p.mouseIsPressed) {
+        mover.applyForce(new p5.Vector(0.1, 0));
+        mover2.applyForce(new p5.Vector(0.1, 0));
+      }
+      mover.applyForce(new p5.Vector(0, 0.098).mult(mover.mass));
+
+      mover.move();
+      mover.checkEdges();
+      mover.render();
+
+      mover2.applyForce(new p5.Vector(0, 0.098).mult(mover2.mass));
+
+      mover2.move();
+      mover2.checkEdges();
+      mover2.render();
+    };
+  };
+
+  new p5(sketch, sketchContainer);
+}

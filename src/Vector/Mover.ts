@@ -7,27 +7,31 @@ export class Mover {
   topVelocity = 10;
 
   p: p5;
+  mass: number;
+  r: number;
 
-  constructor(position: p5.Vector, p: p5) {
+  constructor(position: p5.Vector, r: number, p: p5) {
     this.position = position;
     this.velocity = p.createVector(0, 0);
     this.acceleration = p.createVector(0, 0);
     this.p = p;
+    this.r = r;
+    this.mass = Math.PI * Math.pow(r, 2);
   }
 
   move() {
     this.velocity.add(this.acceleration);
-    console.log(
-      "%c [ this.velocity ]-20",
-      "font-size:13px; background:pink; color:#bf2c9f;",
-      this.velocity.mag()
-    );
     this.velocity.limit(this.topVelocity);
+    this.acceleration.mult(0);
     this.position.add(this.velocity);
-    // if (this.velocity.x <= 0) {
-    //   this.velocity.x = 0;
-    //   this.acceleration.x = 0;
-    // }
+  }
+
+  applyForce(force: p5.Vector) {
+    const f = force.copy();
+
+    f.div(this.mass);
+
+    this.acceleration.add(f);
   }
   speedUp() {
     this.acceleration.add(this.p.createVector(0.1, 0.0));
@@ -60,20 +64,24 @@ export class Mover {
   }
 
   checkEdges() {
-    if (this.position.x < 0) {
-      this.velocity.x = -this.velocity.x * 0.3;
-    } else if (this.position.y < 0) {
-      this.velocity.y = -this.velocity.y * 0.3;
-    } else if (this.position.x > this.p.width) {
-      this.velocity.x = -this.velocity.x * 0.3;
-    } else if (this.position.y > this.p.height) {
-      this.velocity.y = -this.velocity.y * 0.3;
+    if (this.position.x - this.r < 0) {
+      this.position.x = this.position.x + 1;
+      this.velocity.x = -this.velocity.x * 0.9;
+    } else if (this.position.y - this.r < 0) {
+      this.position.y = this.position.y + 1;
+      this.velocity.y = -this.velocity.y * 0.9;
+    } else if (this.position.x + this.r > this.p.width) {
+      this.position.x = this.position.x - 1;
+      this.velocity.x = -this.velocity.x * 0.9;
+    } else if (this.position.y + this.r > this.p.height) {
+      this.position.y = this.position.y - 1;
+      this.velocity.y = -this.velocity.y * 0.9;
     }
   }
 
   render() {
     this.p.stroke(255);
     this.p.strokeWeight(3);
-    this.p.circle(this.position.x, this.position.y, 5);
+    this.p.circle(this.position.x, this.position.y, this.r);
   }
 }
